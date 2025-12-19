@@ -2377,12 +2377,16 @@ class ProcessoEletronicoRN extends InfraRN
     try {
         return $callback($this->getObjPenWs());
     } catch (\SoapFault $fault) {
+      LogSEI::getInstance()->gravar(sprintf("SoapFault. tentativa=%s; faultcode=%s; faultmessage=%s", $numTentativa, $fault->faultcode, $fault->getMessage()), InfraLog::$ERRO);
       if(in_array($fault->faultcode, array("HTTP", "WSDL")) && $this->numTentativasErro >= $numTentativa){
           sleep(self::WS_ESPERA_RECONEXAO);
           return $this->tentarNovamenteSobErroHTTP($callback, ++$numTentativa);
       } else {
           throw $fault;
       }
+    } catch (Exception $e) {
+        LogSEI::getInstance()->gravar(sprintf("Exception. tentativa=%s; message=%s", $numTentativa, $e->getMessage()), InfraLog::$ERRO);
+        throw $e;
     }
   }
 
