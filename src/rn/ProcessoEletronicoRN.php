@@ -139,6 +139,7 @@ class ProcessoEletronicoRN extends InfraRN
       'timeout'  => self::WS_TIMEOUT_CONEXAO,
       'headers'  => $this->arrheaders,
       'cert'     => [$strLocalizacaoCertificadoDigital, $strSenhaCertificadoDigital],
+      'verify'   => false,
     ]);
   }
 
