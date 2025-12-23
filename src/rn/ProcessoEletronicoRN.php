@@ -147,7 +147,7 @@ class ProcessoEletronicoRN extends InfraRN
           'body' => $body,
           'headers' => $request->getHeaders(),
         ];
-        @file_put_contents("/var/log/sei/Tramita.log", date("d/m/Y H:i:s") . "- Set:\nTime: {$timestamp}\nBody:\n". var_export($arrayRequest, true) ."\n----------\n", FILE_APPEND);
+        @file_put_contents(DIR_SEI_TEMP .  "/Tramita.log", date("d/m/Y H:i:s") . "- Set:\nTime: {$timestamp}\nBody:\n". var_export($arrayRequest, true) ."\n----------\n", FILE_APPEND);
 
     });
     $stack->push($middleware);
