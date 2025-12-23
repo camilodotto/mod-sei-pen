@@ -151,7 +151,7 @@ class ProcessoEletronicoRN extends InfraRN
 
     });
     $stack->push($middleware);
-    $debug = fopen("/var/log/sei/debug_requests.txt", "a+");
+    $debug = fopen(DIR_SEI_TEMP . "/debug_requests.txt", "a+");
 
     $this->strClientGuzzle = new Client([
       'base_uri' => $this->strBaseUri,
