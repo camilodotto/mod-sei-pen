@@ -147,11 +147,11 @@ class ProcessoEletronicoRN extends InfraRN
           'body' => $body,
           'headers' => $request->getHeaders(),
         ];
-        @file_put_contents(DIR_SEI_TEMP .  "/Tramita.log", date("d/m/Y H:i:s") . "- Set:\nTime: {$timestamp}\nBody:\n". var_export($arrayRequest, true) ."\n----------\n", FILE_APPEND);
+        @file_put_contents(DIR_SEI_TEMP .  "/tramita-recebimento.log", date("d/m/Y H:i:s") . "- Set:\nTime: {$timestamp}\nBody:\n". var_export($arrayRequest, true) ."\n----------\n", FILE_APPEND);
 
     });
     $stack->push($middleware);
-    $debug = fopen(DIR_SEI_TEMP . "/debug_requests.log", "a+");
+    $debug = fopen(DIR_SEI_TEMP . "/debug_requests-recebimento.log", "a+");
 
     $this->strClientGuzzle = new Client([
       'base_uri' => $this->strBaseUri,
@@ -1110,12 +1110,34 @@ class ProcessoEletronicoRN extends InfraRN
         'Accept' => '*/*',
       ];
 
+      $handler = new CurlHandler();
+      $stack = HandlerStack::create($handler);
+      
+      $middleware = Middleware::tap(function (RequestInterface $request) {
+          $timestamp=time();
+          $body = (string) $request->getBody();
+          if (!empty($body)) {
+              $body = json_decode($body, JSON_OBJECT_AS_ARRAY);
+          }
+          $arrayRequest = [
+            'url' => $request->getUri(),
+            'body' => $body,
+            'headers' => $request->getHeaders(),
+          ];
+          @file_put_contents(DIR_SEI_TEMP .  "/tramita-envio.log", date("d/m/Y H:i:s") . "- Set:\nTime: {$timestamp}\nBody:\n". var_export($arrayRequest, true) ."\n----------\n", FILE_APPEND);
+
+      });
+      $stack->push($middleware);
+      $debug = fopen(DIR_SEI_TEMP . "/debug_requests-envio.log", "a+");
+
       $strClientGuzzle = new GuzzleHttp\Client([
         'base_uri' => $strBaseUri,
         'headers'  => $arrheaders,
         'timeout'  => self::WS_TIMEOUT_CONEXAO,
         'cert'     => [$strLocalizacaoCertificadoDigital, $strSenhaCertificadoDigital],
         'verify'   => false,
+        'handler' => $stack,
+        'debug' => $debug,
       ]);
 
     
@@ -1183,12 +1205,34 @@ class ProcessoEletronicoRN extends InfraRN
             'Content-Type' => 'application/json',
         ];
 
+        $handler = new CurlHandler();
+        $stack = HandlerStack::create($handler);
+        
+        $middleware = Middleware::tap(function (RequestInterface $request) {
+            $timestamp=time();
+            $body = (string) $request->getBody();
+            if (!empty($body)) {
+                $body = json_decode($body, JSON_OBJECT_AS_ARRAY);
+            }
+            $arrayRequest = [
+              'url' => $request->getUri(),
+              'body' => $body,
+              'headers' => $request->getHeaders(),
+            ];
+            @file_put_contents(DIR_SEI_TEMP .  "/tramita-envio-parte.log", date("d/m/Y H:i:s") . "- Set:\nTime: {$timestamp}\nBody:\n". var_export($arrayRequest, true) ."\n----------\n", FILE_APPEND);
+
+        });
+        $stack->push($middleware);
+        $debug = fopen(DIR_SEI_TEMP . "/debug_requests-envio-parte.log", "a+");
+        
         $strClientGuzzle = new GuzzleHttp\Client([
             'base_uri' => $strBaseUri,
             'headers'  => $arrheaders,
             'timeout'  => self::WS_TIMEOUT_CONEXAO,
             'cert'     => [$strLocalizacaoCertificadoDigital, $strSenhaCertificadoDigital],
             'verify'   => false,
+            'handler' => $stack,
+            'debug' => $debug,
         ]);
 
 
