@@ -132,6 +132,7 @@ class ProcessoEletronicoRN extends InfraRN
     $this->arrheaders = [
       'Accept' => '*/*',
       'Content-Type' => 'application/json',
+      'Connection' => 'close'
     ];
     $handler = new CurlHandler();
     $stack = HandlerStack::create($handler);
@@ -1108,6 +1109,7 @@ class ProcessoEletronicoRN extends InfraRN
 
       $arrheaders = [
         'Accept' => '*/*',
+        'Connection' => 'close'
       ];
 
       $handler = new CurlHandler();
@@ -1203,6 +1205,7 @@ class ProcessoEletronicoRN extends InfraRN
         $arrheaders = [
             'Accept' => '*/*',
             'Content-Type' => 'application/json',
+            'Connection' => 'close'
         ];
 
         $handler = new CurlHandler();
