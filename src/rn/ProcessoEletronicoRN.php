@@ -2,11 +2,14 @@
 
 $dirSeiVendor = !defined("DIR_SEI_VENDOR") ? getenv("DIR_SEI_VENDOR") ?:  __DIR__ . "/../vendor" : DIR_SEI_VENDOR;
 require_once $dirSeiVendor . '/autoload.php';
-
+use Psr\Http\Message\RequestInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Utils;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Handler\CurlHandler;
 
 class ProcessoNaoPodeSerDesbloqueadoException extends Exception {}
 
@@ -133,13 +136,34 @@ class ProcessoEletronicoRN extends InfraRN
       'Accept' => '*/*',
       'Content-Type' => 'application/json',
     ];
+    $handler = new CurlHandler();
+    $stack = HandlerStack::create($handler);
     
+    $middleware = Middleware::tap(function (RequestInterface $request) {
+        $timestamp=time();
+        $body = (string) $request->getBody();
+        if (!empty($body)) {
+            $body = json_decode($body, JSON_OBJECT_AS_ARRAY);
+        }
+        $arrayRequest = [
+          'url' => $request->getUri(),
+          'body' => $body,
+          'headers' => $request->getHeaders(),
+        ];
+        @file_put_contents(DIR_SEI_TEMP .  "/tramita-recebimento.log", date("d/m/Y H:i:s") . "- Set:\nTime: {$timestamp}\nBody:\n". var_export($arrayRequest, true) ."\n----------\n", FILE_APPEND);
+
+    });
+    $stack->push($middleware);
+    $debug = fopen(DIR_SEI_TEMP . "/debug_requests-recebimento.log", "a+");
+
     $this->strClientGuzzle = new Client([
       'base_uri' => $this->strBaseUri,
       'timeout'  => self::WS_TIMEOUT_CONEXAO,
       'headers'  => $this->arrheaders,
       'cert'     => [$strLocalizacaoCertificadoDigital, $strSenhaCertificadoDigital],
       'verify'   => false,
+      'handler' => $stack,
+      'debug' => $debug,
     ]);
   }
 
@@ -1136,12 +1160,34 @@ class ProcessoEletronicoRN extends InfraRN
         'Accept' => '*/*',
       ];
 
+      $handler = new CurlHandler();
+      $stack = HandlerStack::create($handler);
+      
+      $middleware = Middleware::tap(function (RequestInterface $request) {
+          $timestamp=time();
+          $body = (string) $request->getBody();
+          if (!empty($body)) {
+              $body = json_decode($body, JSON_OBJECT_AS_ARRAY);
+          }
+          $arrayRequest = [
+            'url' => $request->getUri(),
+            'body' => $body,
+            'headers' => $request->getHeaders(),
+          ];
+          @file_put_contents(DIR_SEI_TEMP .  "/tramita-envio.log", date("d/m/Y H:i:s") . "- Set:\nTime: {$timestamp}\nBody:\n". var_export($arrayRequest, true) ."\n----------\n", FILE_APPEND);
+
+      });
+      $stack->push($middleware);
+      $debug = fopen(DIR_SEI_TEMP . "/debug_requests-envio.log", "a+");
+
       $strClientGuzzle = new GuzzleHttp\Client([
         'base_uri' => $strBaseUri,
         'headers'  => $arrheaders,
         'timeout'  => self::WS_TIMEOUT_CONEXAO,
         'cert'     => [$strLocalizacaoCertificadoDigital, $strSenhaCertificadoDigital],
         'verify'   => false,
+        'handler' => $stack,
+        'debug' => $debug,
       ]);
 
     
@@ -1209,12 +1255,34 @@ class ProcessoEletronicoRN extends InfraRN
             'Content-Type' => 'application/json',
         ];
 
+        $handler = new CurlHandler();
+        $stack = HandlerStack::create($handler);
+        
+        $middleware = Middleware::tap(function (RequestInterface $request) {
+            $timestamp=time();
+            $body = (string) $request->getBody();
+            if (!empty($body)) {
+                $body = json_decode($body, JSON_OBJECT_AS_ARRAY);
+            }
+            $arrayRequest = [
+              'url' => $request->getUri(),
+              'body' => $body,
+              'headers' => $request->getHeaders(),
+            ];
+            @file_put_contents(DIR_SEI_TEMP .  "/tramita-envio-parte.log", date("d/m/Y H:i:s") . "- Set:\nTime: {$timestamp}\nBody:\n". var_export($arrayRequest, true) ."\n----------\n", FILE_APPEND);
+
+        });
+        $stack->push($middleware);
+        $debug = fopen(DIR_SEI_TEMP . "/debug_requests-envio-parte.log", "a+");
+        
         $strClientGuzzle = new GuzzleHttp\Client([
             'base_uri' => $strBaseUri,
             'headers'  => $arrheaders,
             'timeout'  => self::WS_TIMEOUT_CONEXAO,
             'cert'     => [$strLocalizacaoCertificadoDigital, $strSenhaCertificadoDigital],
             'verify'   => false,
+            'handler' => $stack,
+            'debug' => $debug,
         ]);
 
 
