@@ -110,7 +110,7 @@ class ProcedimentoAndamentoRN extends InfraRN
      * @param array $parArrChavesSincronizacao Chaves que serã utilizadas na sincronização do processamento
      * @return void
      */
-  public function sinalizarInicioRecebimentoControlado($parArrChavesSincronizacao)
+  public function sinalizarInicioRecebimento($parArrChavesSincronizacao)
     {
      
       $strNumeroRegistro = $parArrChavesSincronizacao["NumeroRegistro"];
