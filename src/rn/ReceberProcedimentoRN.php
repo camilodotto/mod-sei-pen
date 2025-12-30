@@ -77,7 +77,7 @@ class ReceberProcedimentoRN extends InfraRN
         $strIdTarefa = $bolEhProcesso ? ProcessoEletronicoRN::$TI_PROCESSO_ELETRONICO_PROCESSO_RECEBIDO : ProcessoEletronicoRN::$TI_DOCUMENTO_AVULSO_RECEBIDO;
         $arrChavesSincronizacao["IdTarefa"] = ProcessoEletronicoRN::obterIdTarefaModulo($strIdTarefa);
 
-      if($this->objProcedimentoAndamentoRN->sinalizarInicioRecebimentoControlado($arrChavesSincronizacao)){
+      if($this->objProcedimentoAndamentoRN->sinalizarInicioRecebimento($arrChavesSincronizacao)){
           $objTramite = $this->consultarTramite($parNumIdentificacaoTramite);
 
           // Valida os metadados e baixa os documentos antes de iniciar uma transação com o banco
@@ -384,7 +384,7 @@ class ReceberProcedimentoRN extends InfraRN
             "IdTarefa" => ProcessoEletronicoRN::obterIdTarefaModulo(ProcessoEletronicoRN::$TI_PROCESSO_ELETRONICO_PROCESSO_TRAMITE_RECUSADO)
         );
 
-        if($this->objProcedimentoAndamentoRN->sinalizarInicioRecebimentoControlado($arrChavesSincronizacao)){
+        if($this->objProcedimentoAndamentoRN->sinalizarInicioRecebimento($arrChavesSincronizacao)){
             $this->receberTramitesRecusadosInterno($objTramite);
         }
     } catch(Exception $e) {
