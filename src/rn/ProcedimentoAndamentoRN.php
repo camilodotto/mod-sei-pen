@@ -110,13 +110,17 @@ class ProcedimentoAndamentoRN extends InfraRN
      * @param array $parArrChavesSincronizacao Chaves que serã utilizadas na sincronização do processamento
      * @return void
      */
-  public function sinalizarInicioRecebimento($parArrChavesSincronizacao)
+  public function sinalizarInicioRecebimentoControlado($parArrChavesSincronizacao)
     {
+
+      LogSEI::getInstance()->gravar($parArrChavesSincronizacao);
+
       $strNumeroRegistro = $parArrChavesSincronizacao["NumeroRegistro"];
       $numIdTramite = $parArrChavesSincronizacao["IdTramite"];
       $numIdTarefa = $parArrChavesSincronizacao["IdTarefa"];
 
     if(!$this->sincronizarRecebimentoProcessos($strNumeroRegistro, $numIdTramite, $numIdTarefa)){
+        LogSEI::getInstance()->gravar("Trâmite de recebimento $numIdTramite já se encontra em processamento");
         $this->objPenDebug->gravar("Trâmite de recebimento $numIdTramite já se encontra em processamento", 3, false);
         return false;
     }
