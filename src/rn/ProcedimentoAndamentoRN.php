@@ -113,7 +113,7 @@ class ProcedimentoAndamentoRN extends InfraRN
   public function sinalizarInicioRecebimentoControlado($parArrChavesSincronizacao)
     {
 
-      LogSEI::getInstance()->gravar($parArrChavesSincronizacao);
+      LogSEI::getInstance()->gravar("NumeroRegistro: " . $parArrChavesSincronizacao["NumeroRegistro"] . " IdTramite: " . $parArrChavesSincronizacao["IdTramite"] . " IdTarefa: " . $parArrChavesSincronizacao["IdTarefa"]);
 
       $strNumeroRegistro = $parArrChavesSincronizacao["NumeroRegistro"];
       $numIdTramite = $parArrChavesSincronizacao["IdTramite"];
