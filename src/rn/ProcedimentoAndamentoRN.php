@@ -112,20 +112,18 @@ class ProcedimentoAndamentoRN extends InfraRN
      */
   public function sinalizarInicioRecebimentoControlado($parArrChavesSincronizacao)
     {
-
-      LogSEI::getInstance()->gravar("NumeroRegistro: " . $parArrChavesSincronizacao["NumeroRegistro"] . " IdTramite: " . $parArrChavesSincronizacao["IdTramite"] . " IdTarefa: " . $parArrChavesSincronizacao["IdTarefa"]);
-
+     
       $strNumeroRegistro = $parArrChavesSincronizacao["NumeroRegistro"];
       $numIdTramite = $parArrChavesSincronizacao["IdTramite"];
       $numIdTarefa = $parArrChavesSincronizacao["IdTarefa"];
-
-    if(!$this->sincronizarRecebimentoProcessos($strNumeroRegistro, $numIdTramite, $numIdTarefa)){
-        LogSEI::getInstance()->gravar("Trâmite de recebimento $numIdTramite já se encontra em processamento");
+      
+      if(!$this->sincronizarRecebimentoProcessos($strNumeroRegistro, $numIdTramite, $numIdTarefa)){
+        LogSEI::getInstance()->gravar("Trâmite de recebimento já se encontra em processamento. NumeroRegistro: " . $parArrChavesSincronizacao["NumeroRegistro"] . " IdTramite: " . $parArrChavesSincronizacao["IdTramite"] . " IdTarefa: " . $parArrChavesSincronizacao["IdTarefa"]);
         $this->objPenDebug->gravar("Trâmite de recebimento $numIdTramite já se encontra em processamento", 3, false);
         return false;
-    }
-
-      LogSEI::getInstance()->gravar("Iniciando recebimento de processo externo");
+      }
+      
+      LogSEI::getInstance()->gravar("Iniciando recebimento de processo externo. NumeroRegistro: " . $parArrChavesSincronizacao["NumeroRegistro"] . " IdTramite: " . $parArrChavesSincronizacao["IdTramite"] . " IdTarefa: " . $parArrChavesSincronizacao["IdTarefa"]);
       $this->setOpts($strNumeroRegistro, $numIdTramite, $numIdTarefa);
       $this->cadastrar(ProcedimentoAndamentoDTO::criarAndamento('Iniciando recebimento de processo externo', 'S'));
 
