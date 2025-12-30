@@ -125,6 +125,7 @@ class ProcedimentoAndamentoRN extends InfraRN
         return false;
     }
 
+      LogSEI::getInstance()->gravar("Iniciando recebimento de processo externo");
       $this->setOpts($strNumeroRegistro, $numIdTramite, $numIdTarefa);
       $this->cadastrar(ProcedimentoAndamentoDTO::criarAndamento('Iniciando recebimento de processo externo', 'S'));
 
